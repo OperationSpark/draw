@@ -16,6 +16,7 @@
 		<script src="js/lib/easeljs-0.7.1.min.js"></script>
 	    <script src="js/lib/soundjs-0.5.2.min.js"></script>
 	    <script src="js/lib/preloadjs-0.4.1.min.js"></script>
+	    <script src="js/lib/should.js"></script>
 
 	   	<script src="../draw-v1.2.js"></script>
 
@@ -41,14 +42,14 @@
 			    (function(window, document){
 					window.index = window.index || {};
 			        index.app = new index.App();
-			        console.log('app initialized!')
+			        console.log('app initialized!');
 				})(window, document);
-			}
+			};
 		</script>
 	</head>
 
 	<body>
-		<div style="text-align: center">
+		<div>
 				<!-- canvas element that serves as the stage for our app or game -->
 				<canvas id="canvas" width="500" height="500"></canvas>
 			
