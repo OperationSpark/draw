@@ -1,8 +1,9 @@
 /**
  * draw.js : Not optimally desgiend, but to assist in learning, a wrapper 
- * of the CreateJS Graphic API to reduce boiler-plate.  For CreateJS Graphic 
- * API not wrapped by this version, use the Graphic API directly.
+ * of the CreateJS Graphic API to reduce boiler-plate and that also supports
+ * calculation of width and height properties on shapes.
  * 
+ * For CreateJS Graphic API not wrapped by this version, use the Graphic API directly.
  * See: http://www.createjs.com/Docs/EaselJS/classes/Graphics.html
  * 
  * Version: 1.2
@@ -10,22 +11,78 @@
  * Dependencies: easeljs-0.7.1
  */
 (function (window) {
-
+    const TYPE_RECTANGULAR  = 'retangular';
+    const TYPE_CIRCULAR     = 'circular';
+    const TYPE_TRIANGULAR   = 'triangular';
+    const TYPE_IRREGULAR    = 'irregular';
+    const TYPE_LINEAR       = 'linear';
+    
     window.opspark = window.opspark || {};
     
     function sortNumbersAscending(a, b) { return a - b; }
     
+    function getStartPointX(object) {
+        switch (object.type) {
+            case TYPE_CIRCULAR:
+                return -(object.radius) + object.xOffset;
+            default:
+                return object.xOffset;
+        }
+    }
+    
+    function getStartPointY(object) {
+        switch (object.type) {
+            case TYPE_CIRCULAR:
+                return -(object.radius) + object.yOffset;
+            default:
+                return object.yOffset;
+        }
+    }
+    
+    function getEndPointX(object) {
+        switch (object.type) {
+            case TYPE_CIRCULAR:
+                return object.radius + object.xOffset;
+            default:
+                return object.xOffset + object.width;
+        }
+    }
+    
+    function getEndPointY(object) {
+        switch (object.type) {
+            case TYPE_CIRCULAR:
+                return object.radius + object.yOffset;
+            default:
+                return object.yOffset + object.height;
+        }
+    }
+    
+    function buildDimensions(type, width, height, xOffset, yOffset, radius) {
+        var dimensions = {
+            type: type,
+            width: width,
+            height: height,
+            xOffset: (xOffset) ? xOffset : 0,
+        	yOffset: (yOffset) ? yOffset : 0
+        };
+        if (radius) { dimensions.radius = radius; }
+        return dimensions;
+    }
+    
     var draw = {
-        setBoundsOn: function (shape, width, height, xOffset, yOffset, radius, onShape) {
-            if (onShape) {
-        	    // first figure out the points of extremity //
-        	    var xStartPoint = [onShape.xOffset, xOffset].sort(sortNumbersAscending)[0];
-        	    var xEndPoint = [onShape.xOffset + onShape.width, xOffset + width].sort(sortNumbersAscending)[1];
-        	    
-        	    var yStartPoint = [onShape.yOffset, yOffset].sort(sortNumbersAscending)[0];
-        	    var yEndPoint = [onShape.yOffset + onShape.height, yOffset + height].sort(sortNumbersAscending)[1];
-        	    
-        	    var xs = 0;
+        setDimensionsOn: function (shape, dimensions) {
+            /*
+             * If the shape already has dimensions, it means we're adding graphics to it, making it composite.
+             */
+            if (shape.dimensions) {
+                // first figure out the points of extremity //
+                var xStartPoint = [getStartPointX(shape), getStartPointX(dimensions)].sort(sortNumbersAscending)[0];
+                var xEndPoint = [getEndPointX(shape), getEndPointX(dimensions)].sort(sortNumbersAscending)[1];
+                
+                var yStartPoint = [getStartPointY(shape), getStartPointY(dimensions)].sort(sortNumbersAscending)[0];
+                var yEndPoint = [getEndPointY(shape), getEndPointY(dimensions)].sort(sortNumbersAscending)[1];
+                
+                var xs = 0;
                 var ys = 0;
                 
                 /*
@@ -34,73 +91,81 @@
                  */
                 xs = xEndPoint - xStartPoint;
                 xs = xs * xs;
-                width = Math.sqrt(xs + ys);
-        	    
+                dimensions.width = Math.sqrt(xs + ys);
+                
                 xs = 0;
                 ys = yEndPoint - yStartPoint;
                 ys = ys * ys;
-        	    height = Math.sqrt(xs + ys);
-        	    
-        	    xOffset = xStartPoint, yOffset = yStartPoint;
-        	    
-        	    // TODO: Hmm, haven't checked this is right or even valid on 
-        	    // compound shapes, regardless, we are not taking into account offset, so, fix it or drop it //
-        	    if (radius) { radius += onShape.radius; }
-        	}
+                dimensions.height = Math.sqrt(xs + ys);
+                
+                dimensions.xOffset = xStartPoint;
+                dimensions.yOffset = yStartPoint;
+                
+                /*
+                 * If we're compounding graphics, the shape is now irregular.
+                 */
+                dimensions.type = TYPE_IRREGULAR;
+                
+                /*
+                 * We don't need to track radius on irregular objects.
+                 */
+                if (shape.radius) { delete shape.radius; }
+            }
             
-            shape.setBounds(xOffset, yOffset, width, height);
-        	shape.bounds = shape.getBounds();
-        	shape.width = shape.bounds.width;
-        	shape.height = shape.bounds.height;
-        	shape.xOffset = xOffset;
-        	shape.yOffset = yOffset;
-        	if (radius) {shape.radius = radius; }
-        	console.log(width);
-        	console.log(height);
-	        return shape;
-        },
-        
-        line: function (x, y, strokeColor, strokeStyle, xOffset, yOffset, shape) {
-            xOffset = (xOffset) ? xOffset : 0;
-            yOffset = (yOffset) ? yOffset : 0;
-            shape = (shape) ? shape : new createjs.Shape();
-            shape.graphics
-                .setStrokeStyle(strokeStyle)
-                .beginStroke(strokeColor)
-                .moveTo(xOffset, yOffset)
-                .lineTo(x, y);
+            shape.setBounds(dimensions.xOffset, dimensions.yOffset, dimensions.width, dimensions.height);
+            shape.dimensions = dimensions;
+            shape.width = dimensions.width;
+            shape.height = dimensions.height;
+            shape.xOffset = dimensions.xOffset;
+            shape.yOffset = dimensions.yOffset;
+            shape.type = dimensions.type;
+
+            // debug //
+            console.log(shape.width);
+            console.log(shape.height);
+            
             return shape;
         },
         
+        line: function (x, y, strokeColor, strokeStyle, xOffset, yOffset, onShape) {
+            var dimensions = buildDimensions(TYPE_LINEAR, x, y, xOffset, yOffset);
+            
+            var shape = (onShape) ? onShape : new createjs.Shape();
+            shape.graphics
+                .setStrokeStyle(strokeStyle)
+                .beginStroke(strokeColor)
+                .moveTo(dimensions.xOffset, dimensions.yOffset)
+                .lineTo(x, y);
+                
+            return draw.setDimensionsOn(shape, dimensions);
+        },
+        
         rect: function (width, height, color, strokeColor, strokeStyle, xOffset, yOffset, onShape) { 
-        	xOffset = (xOffset) ? xOffset : 0;
-        	yOffset = (yOffset) ? yOffset : 0;
-        	width = (width) ? width : 0;
-        	height = (height) ? height : 0;
-        	
-        	var shape = (onShape) ? onShape : new createjs.Shape();
-        	
-        	shape.graphics
-        		.setStrokeStyle(strokeStyle)
-        		.beginStroke(strokeColor)
-        		.beginFill(color)
-        		.drawRect(xOffset, yOffset, width, height);
-        	
-        	return draw.setBoundsOn(shape, width, height, xOffset, yOffset, null, onShape);
+            var dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset);
+            
+            var shape = (onShape) ? onShape : new createjs.Shape();
+            shape.graphics
+                .setStrokeStyle(strokeStyle)
+                .beginStroke(strokeColor)
+                .beginFill(color)
+                .drawRect(dimensions.xOffset, dimensions.yOffset, width, height);
+                
+            return draw.setDimensionsOn(shape, dimensions, onShape);
         },
         
         roundRect: function (width, height, radius, color, strokeColor, strokeStyle, xOffset, yOffset, onShape) {
-    		xOffset = (xOffset) ? xOffset : 0;
-        	yOffset = (yOffset) ? yOffset : 0;
-        	width = (width) ? width : 0;
-        	height = (height) ? height : 0;
-        	var shape = (onShape) ? onShape : new createjs.Shape();
-        	shape.graphics
-        		.setStrokeStyle(strokeStyle)
-        		.beginStroke(strokeColor)
-        		.beginFill(color)
-        		.drawRoundRect(xOffset, yOffset, width, height, radius);
-	        return draw.setBoundsOn(shape, width, height, xOffset, yOffset, radius, onShape);
+            var dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset);
+            
+            var shape = (onShape) ? onShape : new createjs.Shape();
+            shape.graphics
+                .setStrokeStyle(strokeStyle)
+                .beginStroke(strokeColor)
+                .beginFill(color)
+                .drawRoundRect(dimensions.xOffset, dimensions.yOffset, width, height, radius);
+
+            draw.setDimensionsOn(shape, dimensions);
+            shape.dimensions.cornerRadius = radius;
+            return shape;
     	},
     	
     	roundRectComplex: function (width, 
@@ -115,65 +180,76 @@
     	                            xOffset, 
     	                            yOffset, 
     	                            onShape) {
-    	    xOffset = (xOffset) ? xOffset : 0;
-        	yOffset = (yOffset) ? yOffset : 0;
-        	width = (width) ? width : 0;
-        	height = (height) ? height : 0;
+    	    var dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset);
+    	    
         	var shape = (onShape) ? onShape : new createjs.Shape();
         	shape.graphics
         		.setStrokeStyle(strokeStyle)
         		.beginStroke(strokeColor)
         		.beginFill(color)
-        		.drawRoundRectComplex(xOffset, yOffset, width, height, radiusTopLeft, radiusTopRight, radiusBottomRight, radiusBottomLeft);
-	        draw.setBoundsOn(shape, width, height, xOffset, yOffset, null, onShape);
-	        shape.radiusTopLeft = radiusTopLeft;
-	        shape.radiusTopRight = radiusTopRight;
-	        shape.radiusBottomRight = radiusBottomRight;
-	        shape.radiusBottomLeft = radiusBottomLeft;
+        		.drawRoundRectComplex(dimensions.xOffset, 
+        		                      dimensions.yOffset, 
+        		                      width, 
+        		                      height, 
+        		                      radiusTopLeft, 
+        		                      radiusTopRight, 
+        		                      radiusBottomRight, 
+        		                      radiusBottomLeft);
+        		                      
+	        draw.setDimensionsOn(shape, dimensions);
+	        shape.dimensions.radiusTopLeft = radiusTopLeft;
+	        shape.dimensions.radiusTopRight = radiusTopRight;
+	        shape.dimensions.radiusBottomRight = radiusBottomRight;
+	        shape.dimensions.radiusBottomLeft = radiusBottomLeft;
             return shape;
     	},
 
     	circle: function (radius, color, strokeColor, strokeStyle, xOffset, yOffset, onShape) { 
-        	xOffset = (xOffset) ? xOffset : 0;
-        	yOffset = (yOffset) ? yOffset : 0;
-        	var width = (radius * 2);
-        	var height = (radius * 2);
+        	var dimensions = buildDimensions(TYPE_CIRCULAR, radius * 2, radius * 2, xOffset, yOffset, radius);
+        	
         	var shape = (onShape) ? onShape : new createjs.Shape();
         	shape.graphics
         		.setStrokeStyle(strokeStyle)
         		.beginStroke(strokeColor)
         		.beginFill(color)
-        		.drawCircle(xOffset, yOffset, radius);
+        		.drawCircle(dimensions.xOffset, dimensions.yOffset, radius);
         	
-        	return draw.setBoundsOn(shape, width, height, xOffset, yOffset, radius, onShape);
+        	draw.setDimensionsOn(shape, dimensions);
+        	shape.radius = radius;
+        	return shape;
     	},
 
         drawEllipse: function (width, height, color, strokeColor, strokeStyle, xOffset, yOffset, onShape) {
-            xOffset = (xOffset) ? xOffset : 0;
-            yOffset = (yOffset) ? yOffset : 0;
+            var dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset);
+            
             var shape = (onShape) ? onShape : new createjs.Shape();
             shape.graphics
                 .setStrokeStyle(strokeStyle)
                 .beginStroke(strokeColor)
                 .beginFill(color)
-                .drawEllipse(xOffset, yOffset, width, height);
-            return draw.setBoundsOn(shape, width, height, xOffset, yOffset, null, onShape);
+                .drawEllipse(dimensions.xOffset, dimensions.yOffset, width, height);
+                
+            return draw.setDimensionsOn(shape, dimensions);
         },
 
     	polyStar: function (radius, sides, pointSize, angle, color, strokeColor, strokeStyle, xOffset, yOffset, onShape) {
-    		xOffset = (xOffset) ? xOffset : 0;
-        	yOffset = (yOffset) ? yOffset : 0;
-        	var width = (radius * 2);
-        	var height = (radius * 2);
+    		var dimensions = buildDimensions(TYPE_CIRCULAR, radius * 2, radius * 2, xOffset, yOffset, radius);
+    		
         	var shape = (onShape) ? onShape : new createjs.Shape();
         	shape.graphics
         		.setStrokeStyle(strokeStyle)
         		.beginStroke(strokeColor)
         		.beginFill(color)
-        		.drawPolyStar(xOffset, yOffset, radius, sides, pointSize || 0, angle);
-        	return draw.setBoundsOn(shape, width, height, xOffset, yOffset, radius, onShape);
-    	} 
+        		.drawPolyStar(dimensions.xOffset, dimensions.yOffset, radius, sides, pointSize || 0, angle);
+        	
+        	draw.setDimensionsOn(shape, dimensions);
+        	shape.radius = radius;
+        	return shape;
+    	},
+    	
+        getStartPointX: getStartPointX
     };
+    
     
 	window.opspark.draw = draw;
 
