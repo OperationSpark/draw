@@ -1,7 +1,6 @@
 (function (window) {
 
     window.index = window.index || {};
-    var should = window.should;
     var draw = window.opspark.draw;
 
     /*
