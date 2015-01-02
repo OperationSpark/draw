@@ -1,6 +1,8 @@
 Draw
 ===
 
+To assist in learning, a wrapper of the CreateJS Graphic API to reduce boiler-plate and that also supports calculation of width and height properties on shapes and composite grap.
+
 ##Installation
 
 You can either install using bower or manually download the file and `draw-x.x.x.js` include it in your index.html.
