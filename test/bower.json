@@ -1,0 +1,13 @@
+{
+  "name": "draw-test",
+  "version": "1.0.0",
+  "authors": [
+    "jfraboni <john@operationspark.org>"
+  ],
+  "description": "A list of dependencies for our test",
+  "main": "index.html",
+  "dependencies": {
+    "easeljs": "~0.8.0",
+    "should": "~4.6.1"
+  }
+}

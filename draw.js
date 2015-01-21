@@ -8,7 +8,7 @@
  * 
  * Version: 1.2
  * 
- * Dependencies: easeljs-0.7.1
+ * Dependencies: easeljs-0.8.0
  */
 (function (window) {
     const TYPE_RECTANGULAR  = 'retangular';
