@@ -121,8 +121,8 @@
             shape.type = dimensions.type;
 
             // debug //
-            console.log(shape.width);
-            console.log(shape.height);
+            // console.log(shape.width);
+            // console.log(shape.height);
             
             return shape;
         },
