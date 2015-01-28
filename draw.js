@@ -16,11 +16,13 @@
     
     window.opspark = window.opspark || {};
     
+    var fps = new createjs.Text("-- fps", "bold 15px Arial", "#FFF");
+    
     function sortNumbersAscending(a, b) { return a - b; }
     function sortNumbersDescending(a, b) { return b - a; }
     
-    function addBlurFilterTo(displayObject, spreadX, spreadY, quality) {
-        var blurFilter = new createjs.BlurFilter(5, 5, 1);
+    function blurFilterOn(displayObject, blurX, blurY, quality) {
+        var blurFilter = new createjs.BlurFilter(blurX, blurY, quality);
         displayObject.filters = displayObject.filters.concat([blurFilter]);
         displayObject.cache(-displayObject.radius, -displayObject.radius, displayObject.width, displayObject.height);
         return displayObject;
@@ -269,7 +271,13 @@
         getEndPointX: getEndPointX,
         getEndPointY: getEndPointY,
         
-        addBlurFilterTo: addBlurFilterTo
+        blurFilterOn: blurFilterOn,
+        
+        fps: fps,
+        
+        updateFps: function (parent) {
+            fps.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
+        }
     };
     
 	window.opspark.draw = draw;
