@@ -22,6 +22,10 @@
     function sortNumbersDescending(a, b) { return b - a; }
     
     function blurFilterOn(displayObject, blurX, blurY, quality) {
+        blurX = (blurX) ? blurX : 5;
+        blurY = (blurY) ? blurY : 5;
+        quality = (quality) ? quality : 1;
+        
         var blurFilter = new createjs.BlurFilter(blurX, blurY, quality);
         displayObject.filters = (displayObject.filters) ? displayObject.filters.concat(blurFilter) : [blurFilter];
         displayObject.cache(-displayObject.radius, -displayObject.radius, displayObject.width, displayObject.height);
