@@ -16,8 +16,6 @@
     
     window.opspark = window.opspark || {};
     
-    var fps = new createjs.Text("-- fps", "bold 15px Arial", "#FFF");
-    
     function sortNumbersAscending(a, b) { return a - b; }
     function sortNumbersDescending(a, b) { return b - a; }
     
@@ -277,10 +275,18 @@
         
         blurFilterOn: blurFilterOn,
         
-        fps: fps,
-        
-        updateFps: function (parent) {
-            fps.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
+        fps: function (color) {
+            color = (color) ? color : '#FFF';
+            var _textfield = new createjs.Text("-- fps", "bold 15px Arial", color);
+            var _fps = {
+                textfield: _textfield,
+                update: function (parent) {
+                    _textfield.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
+                }
+            };
+            _.extend(_fps, new createjs.Container());
+            _fps.addChild(_textfield);
+            return _fps;
         }
     };
     
