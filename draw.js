@@ -23,7 +23,7 @@
     
     function blurFilterOn(displayObject, blurX, blurY, quality) {
         var blurFilter = new createjs.BlurFilter(blurX, blurY, quality);
-        displayObject.filters = displayObject.filters.concat([blurFilter]);
+        displayObject.filters = (displayObject.filters) ? displayObject.filters.concat(blurFilter) : [blurFilter];
         displayObject.cache(-displayObject.radius, -displayObject.radius, displayObject.width, displayObject.height);
         return displayObject;
     }
