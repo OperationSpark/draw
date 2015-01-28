@@ -17,6 +17,14 @@
     window.opspark = window.opspark || {};
     
     function sortNumbersAscending(a, b) { return a - b; }
+    function sortNumbersDescending(a, b) { return b - a; }
+    
+    function addBlurFilterTo(displayObject, spreadX, spreadY, quality) {
+        var blurFilter = new createjs.BlurFilter(5, 5, 1);
+        displayObject.filters = displayObject.filters.concat([blurFilter]);
+        displayObject.cache(-displayObject.radius, -displayObject.radius, displayObject.width, displayObject.height);
+        return displayObject;
+    }
     
     function randomColor(r, g, b, a) {
         if (a) { return 'rgba(' + randomRGBRange(r) + ','  + randomRGBRange(g) + ',' + randomRGBRange(b) + ',' + a + ')'; }
@@ -259,7 +267,9 @@
         getStartPointX: getStartPointX,
         getStartPointY: getStartPointY,
         getEndPointX: getEndPointX,
-        getEndPointY: getEndPointY
+        getEndPointY: getEndPointY,
+        
+        addBlurFilterTo: addBlurFilterTo
     };
     
 	window.opspark.draw = draw;
