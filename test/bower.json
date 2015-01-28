@@ -8,6 +8,7 @@
   "main": "index.html",
   "dependencies": {
     "easeljs": "~0.8.0",
-    "should": "~4.6.1"
+    "should": "~4.6.1",
+    "lodash": "~3.0.0"
   }
 }

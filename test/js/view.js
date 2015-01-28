@@ -18,6 +18,8 @@
     p.Container_initialize = p.initialize;
     
     p.initialize = function () {
+        view.addChild(draw.fps('#999'));
+        
         testCompositeRect();
         testCompositeCirc();
         testCompositeIrreg();

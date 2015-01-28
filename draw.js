@@ -278,14 +278,12 @@
         fps: function (color) {
             color = (color) ? color : '#FFF';
             var _textfield = new createjs.Text("-- fps", "bold 15px Arial", color);
-            var _fps = {
-                textfield: _textfield,
-                update: function (parent) {
-                    _textfield.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
-                }
-            };
-            _.extend(_fps, new createjs.Container());
+            var _fps = new createjs.Container();
+            _fps.textfield = _textfield;
             _fps.addChild(_textfield);
+            _fps.update = function (parent) {
+                _textfield.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
+            };
             return _fps;
         }
     };
