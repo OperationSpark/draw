@@ -19,6 +19,10 @@
     function sortNumbersAscending(a, b) { return a - b; }
     function sortNumbersDescending(a, b) { return b - a; }
     
+    function randomIntBetween(min, max) { 
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+    
     function blurFilterOn(displayObject, blurX, blurY, quality) {
         blurX = (blurX) ? blurX : 5;
         blurY = (blurY) ? blurY : 5;
@@ -263,6 +267,32 @@
         	draw.setDimensionsOn(shape, dimensions);
         	shape.radius = radius;
         	return shape;
+    	},
+    	
+    	
+    	randomCircleIn: function (area, borderColor, borderThickness, crossColor) {
+    	    var props, cross, circle;
+    	    
+    	    props= draw.randomRadialProps(area);
+			
+			if (crossColor) {
+			    cross = draw.line(-props.radius, 0, props.radius, 0, crossColor, 2);
+			    draw.line(0, -props.radius, 0, props.radius, crossColor, 2, cross);
+			}
+			
+			circle = draw.circle(props.radius, props.color, borderColor, borderThickness, null, null, cross);
+			circle.x = props.x;
+			circle.y = props.y;
+			return circle;
+    	},
+    	
+    	randomRadialProps: function (area, radiusMin, radiusMax, redMax, greenMax, blueMax) {
+    	    return {
+    	        raduis: randomIntBetween(radiusMin || 5, radiusMax || 20),
+    	        color: randomColor(redMax || 255, greenMax || 255, blueMax || 255),
+    	        x: randomIntBetween(0, area.width),
+    	        y: randomIntBetween(0, area.height)
+    	    };
     	},
     	
     	randomColor: randomColor,
