@@ -270,19 +270,24 @@
     	},
     	
     	
-    	randomCircleIn: function (area, borderColor, borderThickness, crossColor) {
+    	randomCircleIn: function (area, randomizeAlpha, addCross, borderColor, borderThickness) {
     	    var props, cross, circle;
     	    
     	    props= draw.randomRadialProps(area);
 			
-			if (crossColor) {
-			    cross = draw.line(-props.radius, 0, props.radius, 0, crossColor, 2);
-			    draw.line(0, -props.radius, 0, props.radius, crossColor, 2, cross);
+			if (addCross) {
+    			cross = draw.line(-(props.radius), 0, props.radius, 0, borderColor  || '#000', 2);
+    		    draw.line(0, -(props.radius), 0, props.radius, borderColor || '#000', 2, cross);
 			}
+			
+			if (borderColor && !borderThickness) { borderThickness = 1; }
 			
 			circle = draw.circle(props.radius, props.color, borderColor, borderThickness, null, null, cross);
 			circle.x = props.x;
 			circle.y = props.y;
+			
+			if (randomizeAlpha) {circle.alpha = Math.random(); }
+			
 			return circle;
     	},
     	
