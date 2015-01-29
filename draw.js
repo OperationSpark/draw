@@ -271,20 +271,26 @@
     	
     	
     	randomCircleInArea: function (area, randomizeAlpha, addCross, borderColor, borderThickness, randomRadialProps) {
-    	    var props, cross, circle;
+    	    var props, circle;
     	    
     	    props = (randomRadialProps) ? randomRadialProps : draw.randomRadialProps(area);
 			
 			if (addCross) {
-    			cross = draw.line(-(props.radius), 0, props.radius, 0, borderColor  || '#000', 2);
-    		    draw.line(0, -(props.radius), 0, props.radius, borderColor || '#000', 2, cross);
+			    // always make sure the cross is visible - it won't be if randomizeAlpha is false //
+			    randomizeAlpha = true;
+    			circle = draw.line(-(props.radius), 0, props.radius, 0, borderColor  || '#000', 2);
+    		    draw.line(0, -(props.radius), 0, props.radius, borderColor || '#000', 2, circle);
 			}
 			
 			if (borderColor && !borderThickness) { borderThickness = 1; }
 			
-			circle = draw.circle(props.radius, props.color, borderColor, borderThickness, null, null, cross);
+			// first draw the circle's border - don't use stroke //
+			circle = draw.circle(props.radius+borderThickness, borderColor, null, null, null, null, circle);
+			draw.circle(props.radius, props.color, null, null, null, null, circle);
 			circle.x = props.x;
 			circle.y = props.y;
+			
+		    
 			
 			if (randomizeAlpha) {circle.alpha = Math.random(); }
 			

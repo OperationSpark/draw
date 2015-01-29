@@ -20,6 +20,8 @@
     p.initialize = function () {
         view.addChild(draw.fps('#999'));
         
+        view.addChild(draw.randomCircleInArea(canvas, true, true));
+        
         testCompositeRect();
         testCompositeCirc();
         testCompositeIrreg();
