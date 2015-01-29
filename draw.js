@@ -270,10 +270,10 @@
     	},
     	
     	
-    	randomCircleInArea: function (area, randomizeAlpha, addCross, borderColor, borderThickness) {
+    	randomCircleInArea: function (area, randomizeAlpha, addCross, borderColor, borderThickness, randomRadialProps) {
     	    var props, cross, circle;
     	    
-    	    props= draw.randomRadialProps(area);
+    	    props = (randomRadialProps) ? randomRadialProps : draw.randomRadialProps(area);
 			
 			if (addCross) {
     			cross = draw.line(-(props.radius), 0, props.radius, 0, borderColor  || '#000', 2);
