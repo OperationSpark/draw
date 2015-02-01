@@ -306,6 +306,15 @@
     	    };
     	},
     	
+    	textfield: function (text, sizeAndFont, color, align, baseline, x, y) {
+    	    var tf = new createjs.Text(text, sizeAndFont || "15px Arial", color || "#666666");
+			tf.textBaseline = baseline || "top";
+			tf.textAlign = align || "center";
+			tf.x = x;
+			tf.y = y;
+			return tf;
+    	},
+    	
     	randomColor: randomColor,
     	randomRGBRange: randomRGBRange,
     	
