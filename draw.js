@@ -305,6 +305,13 @@
     	        y: randomIntBetween(0, area.height)
     	    };
     	},
+
+        bitmap: function(src,x,y) {
+            var bitmap = new createjs.Bitmap(src);
+            bitmap.x = x;
+            bitmap.y = y;
+            return bitmap;
+        },
     	
     	textfield: function (text, sizeAndFont, color, align, baseline, x, y) {
     	    var tf = new createjs.Text(text, sizeAndFont || "15px Arial", color || "#666666");
