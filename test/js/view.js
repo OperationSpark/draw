@@ -4,7 +4,8 @@
     var draw = window.opspark.draw;
 
     /*
-     * view : A variable that holds a reference to "this" within the context of the View object.
+     * view : A variable that holds a reference to "this" within 
+     * the context of the View object.
      */
     var view;
 
@@ -18,7 +19,9 @@
     p.Container_initialize = p.initialize;
     
     p.initialize = function () {
-        view.addChild(draw.fps('#999'));
+        const fps = draw.fps('#999');
+        fps.x = 100;
+        view.addChild(fps);
         
         view.addChild(draw.randomCircleInArea(canvas, true, true));
         

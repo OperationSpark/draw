@@ -13,7 +13,7 @@
     p.initialize = function () {
         canvas = document.getElementById('canvas');
         stage = new createjs.Stage(canvas);
-        createjs.Ticker.setFPS(60);
+        createjs.Ticker.framerate = 60;
         createjs.Ticker.on('tick', this.onTick, this);
 
         view = new index.View();
