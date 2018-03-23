@@ -1,13 +1,13 @@
 /**
- * draw.js : Not optimally desgiend, but to assist in learning, a wrapper 
- * of the CreateJS Graphic API to reduce boiler-plate and that also supports
+ * draw.js : To assist in learning, a wrapper of the CreateJS 
+ * Graphic API to reduce boiler-plate. draw.js also supports 
  * calculation of width and height properties on shapes.
  * 
- * dependencies: easeljs-0.8.1.min.js
+ * dependencies: "EaselJS": "1.0.2"
  * 
  * In your index.html file, include:
  * 
- * <script src="bower_components/easeljs/lib/easeljs-0.8.1.min.js"></script>
+ * <script src="bower_components/EaselJS/lib/easeljs.min.js"></script>
  * 
  * For CreateJS Graphic API not wrapped by this version, use the Graphic API directly.
  * See: http://www.createjs.com/Docs/EaselJS/classes/Graphics.html
@@ -249,7 +249,7 @@
             return shape;
         },
 
-        drawEllipse: function (width, height, color, strokeColor, strokeStyle, xOffset, yOffset, onShape) {
+        ellipse: function (width, height, color, strokeColor, strokeStyle, xOffset, yOffset, onShape) {
             var dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset);
             
             var shape = (onShape) ? onShape : new createjs.Shape();
@@ -369,7 +369,7 @@
         
         fps: function (color) {
             color = (color) ? color : '#FFF';
-            var _textfield = new createjs.Text("-- fps", "bold 15px Arial", color);
+            var _textfield = new createjs.Text("-- fps", "bold 30px Arial", color);
             var _fps = new createjs.Container();
             _fps.textfield = _textfield;
             _fps.addChild(_textfield);
