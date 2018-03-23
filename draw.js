@@ -20,9 +20,10 @@
     const TYPE_IRREGULAR    = 'irregular';
     const TYPE_LINEAR       = 'linear';
     
+    // use the opspark namespace //
     window.opspark = window.opspark || {};
     
-    var createjs = window.createjs;
+    const createjs = window.createjs;
     
     /**
      * sortNumbersAscending: A sorting method to be used with an Array of Number. Sorts numbers ascending.
@@ -435,13 +436,30 @@
             };
         },
         
-        bitmap: function(src,x,y) {
+        /**
+         * bitmap: Returns a clone of a Bitmap, using the src as the source.
+         * @param {CanvasImageSource | String | Object} src: The source for the Bitmap data.
+         * @param {Number} x: The x position of the Bitmap.
+         * @param {Number} y: The y position of the Bitmap.
+         */
+        bitmap: function(src, x, y) {
             var bitmap = new createjs.Bitmap(src);
             bitmap.x = x;
             bitmap.y = y;
             return bitmap;
         },
         
+        /**
+         * textfield: builds a CreateJS Text.
+         * @param {String} text: A hexidecimal number, the color of the text.
+         * @param {String} sizeAndFont: The font style to use. Any valid value for the CSS font attribute is acceptable (ex. "bold 36px Arial").
+         * @param {String} colr: A hexidecimal number, the color of the text.
+         * @param {String} align: Any of "start", "end", "left", "right", and "center".
+         * @param {String} baseline: Any of "top", "hanging", "middle", "alphabetic", "ideographic", or "bottom".
+         * @param {Number} x: The x position of the Text.
+         * @param {Number} y: The y position of the Text.
+         * @return {Text} The Text.
+         */
         textfield: function (text, sizeAndFont, color, align, baseline, x, y) {
             var tf = new createjs.Text(text, sizeAndFont || "15px Arial", color || "#666666");
             tf.textBaseline = baseline || "top";
@@ -461,6 +479,11 @@
         
         blurFilterOn: blurFilterOn,
         
+        /**
+         * fps: Builds an updateable CreateJS Text to calculate and display fps.
+         * @param {String} color: A hexidecimal number, the color of the text.
+         * @return {TextField} A CreateJS Text.
+         */
         fps: function (color) {
             color = (color) ? color : '#FFF';
             var _textfield = new createjs.Text("-- fps", "bold 30px Arial", color);
