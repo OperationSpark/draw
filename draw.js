@@ -427,6 +427,15 @@
             return circle;
         },
         
+        /**
+         * randomRadialProps: Generates random radial properties within an area for a TYPE_CIRCULAR shape.
+         * @param {Object} area: An Object with x, y, width and height properties.
+         * @param {Number} radiusMin: The minimum radius value.
+         * @param {Number} radiusMax: The maximum radius value.
+         * @param {Number} redMax: The maximum red value, between 0 and 255.
+         * @param {Number} greenMax: The maximum green value, between 0 and 255.
+         * @param {Number} blueMax: The maximum blue value, between 0 and 255.
+         */
         randomRadialProps: function (area, radiusMin, radiusMax, redMax, greenMax, blueMax) {
             return {
                 radius: randomIntBetween(radiusMin || 5, radiusMax || 20),
