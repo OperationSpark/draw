@@ -24,13 +24,41 @@
     
     var createjs = window.createjs;
     
+    /**
+     * sortNumbersAscending: A sorting method to be used with an Array of Number. Sorts numbers ascending.
+     * @param {Number} a: The first number to compare. 
+     * @param {Number} b: The second number to compare.
+     * @return {Number} Either 1, -1 or 0 for sorting purposes.
+     */
     function sortNumbersAscending(a, b) { return a - b; }
+    
+    /**
+     * sortNumbersDescending: A sorting method to be used with an Array of Number. Sorts numbers descending.
+     * @param {Number} a: The first number to compare. 
+     * @param {Number} b: The second number to compare.
+     * @return {Number} Either 1, -1 or 0 for sorting purposes.
+     */
     function sortNumbersDescending(a, b) { return b - a; }
     
+
+    /**
+     * randomIntBetween: Returns a randomly selected number between the min and max, inclusive.
+     * @param {Number} min: The minimum number of the range, inclusive.
+     * @param {Numbrer} max : The maximum number of the range, inclusive.
+     * @return {Number} The randomly selected Number within the range.
+     */
     function randomIntBetween(min, max) { 
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
     
+    /**
+     * blurFilterOn: Applies a blur filter to the provided displayObject.
+     * @param {DisplayObject} displayObject: A CreateJS DisplayObject to which the blur filter will be applied.
+     * @param {Number} blurX: The blur value on the x axis, the horizontal blur radius in pixels.
+     * @param {Number} blurY: The blur value on the y axis, the vertical blur radius in pixels.
+     * @param {Number} quality: The number of blur iterations, representing quality or sharpness.
+     * @return {DisplayObject} Returns the displayObject, blur filter applied.
+     */
     function blurFilterOn(displayObject, blurX, blurY, quality) {
         blurX = (blurX) ? blurX : 5;
         blurY = (blurY) ? blurY : 5;
@@ -42,15 +70,34 @@
         return displayObject;
     }
     
+    /**
+     * randomColor: Generates a random RGBA hexidecimal color value with the max ranges provided by r, g, b, a
+     * @param {Number} r: A Number between 0 and 255. 
+     * @param {Number} g: A Number between 0 and 255.
+     * @param {Number} b: A Number between 0 and 255.
+     * @param {Number} a: A Number btween 0 and 1, ie, 0.3. 0 being full transparent, 1 being fully opaque.
+     * @return {String} A String representing a hexidecimal number, or, if alpha is present, representing the rgba() function.
+     */
     function randomColor(r, g, b, a) {
         if (a) { return 'rgba(' + randomRGBRange(r) + ','  + randomRGBRange(g) + ',' + randomRGBRange(b) + ',' + a + ')'; }
         return '#' + randomRGBRange(r) + randomRGBRange(g) + randomRGBRange(b);
     }
 
+    /**
+     * randomRGBRange: Returns a randomly selected number from 0 up to the maxRange, or 255.
+     * @param {Number} maxRange: The maximum of the range.
+     * @return {String} A String representing a hexidecimal number.
+     */
     function randomRGBRange(maxRange) {
         return Math.floor(Math.random() * (maxRange + 1)).toString(16); 
     }
     
+    /**
+     * getStartPointX: Used to find start x of a DisplayObject, ie, where the shape starts on the x axis. 
+     * Takes into account xOffset, and, radius and xOffset only for TYPE_CIRCULAR shapes.
+     * @param {Object} object: A DisplayObject.
+     * @return {Number} The start point x.
+     */
     function getStartPointX(object) {
         switch (object.type) {
             case TYPE_CIRCULAR:
@@ -60,6 +107,12 @@
         }
     }
     
+    /**
+     * getStartPointY: Used to find start y of a DisplayObject, ie, where the shape starts on the y axis. 
+     * Takes into account yOffset, and, radius and yOffset only for TYPE_CIRCULAR shapes.
+     * @param {Object} object: A DisplayObject. 
+     * @return {Number} The start point y.
+     */
     function getStartPointY(object) {
         switch (object.type) {
             case TYPE_CIRCULAR:
@@ -69,6 +122,12 @@
         }
     }
     
+    /**
+     * getEndPointX: Used to find end x of a DisplayObject, ie, where the shape ends on the x axis. 
+     * Takes into account xOffset and width, and, radius and xOffset only for TYPE_CIRCULAR shapes.
+     * @param {Object} object: A DisplayObject.
+     * @return {Number} The end point x.
+     */
     function getEndPointX(object) {
         switch (object.type) {
             case TYPE_CIRCULAR:
@@ -78,6 +137,12 @@
         }
     }
     
+    /**
+     * getEndPointY: Used to find end y of a DisplayObject, ie, where the shape ends on the y axis. 
+     * Takes into account yOffset and height, and, radius and height only for TYPE_CIRCULAR shapes.
+     * @param {Object} object: A DisplayObject. 
+     * @return {Number} The end point y.
+     */
     function getEndPointY(object) {
         switch (object.type) {
             case TYPE_CIRCULAR:
@@ -87,6 +152,16 @@
         }
     }
     
+    /**
+     * buildDimensions: Returns an Object with dimension properties.
+     * @param {String} type: One of the various shape types, like TYPE_CIRCULAR.
+     * @param {Number} width: The width in pixels. 
+     * @param {Number} height: The height in pixels.
+     * @param {Number} xOffset: The x offset from the shapes registration point - where it will be positioned at its x,y props in its parent.
+     * @param {Number} yOffset: The y offset from the shapes registration point - where it will be positioned at its x,y props in its parent.
+     * @param {Number} radius: The radius, if TYPE_CIRCULAR, etc.
+     * @return {Object} A map of the dimension.
+     */
     function buildDimensions(type, width, height, xOffset, yOffset, radius) {
         var dimensions = {
             type: type,
@@ -100,6 +175,13 @@
     }
     
     var draw = {
+        /**
+         * setDimensionsOn: Takes a Shape, calculates its dimensions, and writes those dimensions to the shape, returns the Shape.
+         * By writing dimensions to the Shape, ie, width, height, we can use these values within calculations for hit detection.
+         * @param {Shape} shape: A CreateJS Shape.
+         * @param {Object} dimensions: A map of dimensions to be used to calculate width, height, etc.
+         * @return {Shape} The Shape passed as shape, with dimensions applied.
+         */
         setDimensionsOn: function (shape, dimensions) {
             /*
              * If the shape already has dimensions, it means we're adding graphics to it, making it composite.
@@ -157,6 +239,18 @@
             return shape;
         },
         
+        /**
+         * line: Draws a line on a new CreateJS Shape, unless a Shape is provided in onShape param, in 
+         * which case draws the line on the onShape Shape, forming a composite Shape. Returns the Shape.
+         * @param {Number} fromX: The starting x position for the line.
+         * @param {Number} fromY: The starting y position for the line.
+         * @param {Number} toX: The ending x position for the line.
+         * @param {Number} toY: The ending y position for the line.
+         * @param {String} strokeColor: A hexidecimal number, the color of the line.
+         * @param {Number} strokeStyle: The line thickness in pixels.
+         * @param {Shape} onShape: If provided, will draw the line on this Shape, updating its dimensions.
+         * @return {Shape}: With the line drawn on it, either a new Shape, or the Shape passed as onShape.
+         */
         line: function (fromX, fromY, toX, toY, strokeColor, strokeStyle, onShape) {
             var dimensions = buildDimensions(TYPE_LINEAR, toX, toY, fromX, fromY);
             
