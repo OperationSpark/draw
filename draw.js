@@ -60,11 +60,7 @@
      * @param {Number} quality: The number of blur iterations, representing quality or sharpness.
      * @return {DisplayObject} Returns the displayObject, blur filter applied.
      */
-    function blurFilterOn(displayObject, blurX, blurY, quality) {
-        blurX = (blurX) ? blurX : 5;
-        blurY = (blurY) ? blurY : 5;
-        quality = (quality) ? quality : 1;
-        
+    function blurFilterOn(displayObject, blurX = 5, blurY = 5, quality = 1) {
         var blurFilter = new createjs.BlurFilter(blurX, blurY, quality);
         displayObject.filters = (displayObject.filters) ? displayObject.filters.concat(blurFilter) : [blurFilter];
         displayObject.cache(-displayObject.radius, -displayObject.radius, displayObject.width, displayObject.height);
@@ -158,13 +154,13 @@
      * @param {String} type: One of the various shape types, like TYPE_CIRCULAR.
      * @param {Number} width: The width in pixels. 
      * @param {Number} height: The height in pixels.
-     * @param {Number} xOffset: The x offset from the shapes registration point - where it will be positioned at its x,y props in its parent.
-     * @param {Number} yOffset: The y offset from the shapes registration point - where it will be positioned at its x,y props in its parent.
+     * @param {Number} xOffset: The x offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+     * @param {Number} yOffset: The y offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
      * @param {Number} radius: The radius, if TYPE_CIRCULAR, etc.
      * @return {Object} A map of the dimension.
      */
     function buildDimensions(type, width, height, xOffset, yOffset, radius) {
-        var dimensions = {
+        const dimensions = {
             type: type,
             width: width,
             height: height,
@@ -175,7 +171,7 @@
         return dimensions;
     }
     
-    var draw = {
+    const draw = {
         /**
          * setDimensionsOn: Takes a Shape, calculates its dimensions, and writes those dimensions to the shape, returns the Shape.
          * By writing dimensions to the Shape, ie, width, height, we can use these values within calculations for hit detection.
@@ -189,14 +185,13 @@
              */
             if (shape.dimensions) {
                 // first figure out the points of extremity //
-                var xStartPoint = [getStartPointX(shape), getStartPointX(dimensions)].sort(sortNumbersAscending)[0];
-                var xEndPoint = [getEndPointX(shape), getEndPointX(dimensions)].sort(sortNumbersAscending)[1];
-                
-                var yStartPoint = [getStartPointY(shape), getStartPointY(dimensions)].sort(sortNumbersAscending)[0];
-                var yEndPoint = [getEndPointY(shape), getEndPointY(dimensions)].sort(sortNumbersAscending)[1];
-                
-                var xs = 0;
-                var ys = 0;
+                const
+                    xStartPoint = [getStartPointX(shape), getStartPointX(dimensions)].sort(sortNumbersAscending)[0],
+                    xEndPoint = [getEndPointX(shape), getEndPointX(dimensions)].sort(sortNumbersAscending)[1],
+                    yStartPoint = [getStartPointY(shape), getStartPointY(dimensions)].sort(sortNumbersAscending)[0],
+                    yEndPoint = [getEndPointY(shape), getEndPointY(dimensions)].sort(sortNumbersAscending)[1];
+
+                let xs = 0, ys = 0;
                 
                 /*
                  * for the width calculation, we don't care about the y value 
@@ -242,7 +237,7 @@
         
         /**
          * line: Draws a line on a new CreateJS Shape, unless a Shape is provided in onShape param, in 
-         * which case draws the line on the onShape Shape, forming a composite Shape. Returns the Shape.
+         * which case draws the line on the onShape Shape, forming a composite Shape.
          * @param {Number} fromX: The starting x position for the line.
          * @param {Number} fromY: The starting y position for the line.
          * @param {Number} toX: The ending x position for the line.
@@ -253,9 +248,9 @@
          * @return {Shape}: With the line drawn on it, either a new Shape, or the Shape passed as onShape.
          */
         line: function (fromX, fromY, toX, toY, strokeColor, strokeStyle, onShape) {
-            var dimensions = buildDimensions(TYPE_LINEAR, toX, toY, fromX, fromY);
-            
-            var shape = (onShape) ? onShape : new createjs.Shape();
+            const 
+                dimensions = buildDimensions(TYPE_LINEAR, toX, toY, fromX, fromY),
+                shape = (onShape) ? onShape : new createjs.Shape();
             shape.graphics
                 .setStrokeStyle(strokeStyle)
                 .beginStroke(strokeColor)
@@ -265,10 +260,21 @@
             return draw.setDimensionsOn(shape, dimensions);
         },
         
+        /**
+         * rect: Draws a rectangle on a new Shape or the provided onShape.
+         * @param {Number} width: The width in pixels.
+         * @param {Number} height: The height in pixels.
+         * @param {String} strokeColor: The fill color, hexidecimal.
+         * @param {Number} strokeStyle: The border thickness in pixels.
+         * @param {Number} xOffset: The x offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Number} yOffset: The y offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Shape} onShape: If provided, will draw the rectangle on this Shape, updating its dimensions.
+         * @return {Shape}: With the rectangle drawn on it, either a new Shape, or the Shape passed as onShape.
+         */
         rect: function (width, height, color, strokeColor, strokeStyle, xOffset, yOffset, onShape) { 
-            var dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset);
-            
-            var shape = (onShape) ? onShape : new createjs.Shape();
+            const
+                dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset),
+                shape = (onShape) ? onShape : new createjs.Shape();
             shape.graphics
                 .setStrokeStyle(strokeStyle)
                 .beginStroke(strokeColor)
@@ -278,10 +284,23 @@
             return draw.setDimensionsOn(shape, dimensions, onShape);
         },
         
+        /**
+         * roundRect: Draws a rectangle with rounded cornders on a new Shape or the provided onShape. The corner radius will be applied to all corners.
+         * @param {Number} width: The width in pixels.
+         * @param {Number} height: The height in pixels.
+         * @param {Number} radius: The corner radius in pixels. Radius will be applied to all corners.
+         * @param {String} color: The fill color, hexidecimal.
+         * @param {String} strokeColor: The stroke color, hexidecimal.
+         * @param {Number} strokeStyle: The border thickness in pixels.
+         * @param {Number} xOffset: The x offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Number} yOffset: The y offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Shape} onShape: If provided, will draw the rounded rectangle on this Shape, updating its dimensions.
+         * @return {Shape}: With the rounded rectangle drawn on it, either a new Shape, or the Shape passed as onShape.
+         */
         roundRect: function (width, height, radius, color, strokeColor, strokeStyle, xOffset, yOffset, onShape) {
-            var dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset);
-            
-            var shape = (onShape) ? onShape : new createjs.Shape();
+            const
+                dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset),
+                shape = (onShape) ? onShape : new createjs.Shape();
             shape.graphics
                 .setStrokeStyle(strokeStyle)
                 .beginStroke(strokeColor)
@@ -293,6 +312,22 @@
             return shape;
         },
         
+        /**
+         * roundRectComplex: Draws a rectangle with optional rounded cornders on a new Shape or the provided onShape. Unlike roundRect, roundRectComplex can have a different radius per corner.
+         * @param {Number} width: The width in pixels.
+         * @param {Number} height: The height in pixels.
+         * @param {Number} radiusTopLeft: The top left corner radius in pixels.
+         * @param {Number} radiusTopRight: The top right corner radius in pixels.
+         * @param {Number} radiusBottomRight: The bottom right corner radius in pixels.
+         * @param {Number} radiusBottomLeft: The bottom left corner radius in pixels.
+         * @param {String} color: The fill color, hexidecimal.
+         * @param {String} strokeColor: The stroke color, hexidecimal.
+         * @param {Number} strokeStyle: The border thickness in pixels.
+         * @param {Number} xOffset: The x offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Number} yOffset: The y offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Shape} onShape: If provided, will draw the complex rounded rectangle on this Shape, updating its dimensions.
+         * @return {Shape}: With the complex rounded rectangle drawn on it, either a new Shape, or the Shape passed as onShape.
+         */
         roundRectComplex: function (width, 
                                     height, 
                                     radiusTopLeft, 
@@ -305,9 +340,9 @@
                                     xOffset, 
                                     yOffset, 
                                     onShape) {
-            var dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset);
-            
-            var shape = (onShape) ? onShape : new createjs.Shape();
+            const
+                dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset),
+                shape = (onShape) ? onShape : new createjs.Shape();
             shape.graphics
                 .setStrokeStyle(strokeStyle)
                 .beginStroke(strokeColor)
@@ -329,10 +364,21 @@
             return shape;
         },
 
+        /**
+         * circle: Draws a circle on a new Shape or the provided onShape.
+         * @param {Number} radius: The radius in pixels.
+         * @param {String} color: The fill color, hexidecimal.
+         * @param {String} strokeColor: The stroke color, hexidecimal.
+         * @param {Number} strokeStyle: The border thickness in pixels.
+         * @param {Number} xOffset: The x offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Number} yOffset: The y offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Shape} onShape: If provided, will draw the circle on this Shape, updating its dimensions.
+         * @return {Shape}: With the circle drawn on it, either a new Shape, or the Shape passed as onShape.
+         */
         circle: function (radius, color, strokeColor, strokeStyle, xOffset, yOffset, onShape) { 
-            var dimensions = buildDimensions(TYPE_CIRCULAR, radius * 2, radius * 2, xOffset, yOffset, radius);
-            
-            var shape = (onShape) ? onShape : new createjs.Shape();
+            const
+                dimensions = buildDimensions(TYPE_CIRCULAR, radius * 2, radius * 2, xOffset, yOffset, radius),
+                shape = (onShape) ? onShape : new createjs.Shape();
             shape.graphics
                 .setStrokeStyle(strokeStyle)
                 .beginStroke(strokeColor)
@@ -344,10 +390,22 @@
             return shape;
         },
 
+        /**
+         * ellipse: Draws a ellipse on a new Shape or the provided onShape. NOte, ellipse has no radius.
+         * @param {Number} width: The width in pixels.
+         * @param {Number} height: The height in pixels.
+         * @param {String} color: The fill color, hexidecimal.
+         * @param {String} strokeColor: The stroke color, hexidecimal.
+         * @param {Number} strokeStyle: The border thickness in pixels.
+         * @param {Number} xOffset: The x offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Number} yOffset: The y offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Shape} onShape: If provided, will draw the ellipse on this Shape, updating its dimensions.
+         * @return {Shape}: With the ellipse drawn on it, either a new Shape, or the Shape passed as onShape.
+         */
         ellipse: function (width, height, color, strokeColor, strokeStyle, xOffset, yOffset, onShape) {
-            var dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset);
-            
-            var shape = (onShape) ? onShape : new createjs.Shape();
+            const
+                dimensions = buildDimensions(TYPE_RECTANGULAR, width, height, xOffset, yOffset),
+                shape = (onShape) ? onShape : new createjs.Shape();
             shape.graphics
                 .setStrokeStyle(strokeStyle)
                 .beginStroke(strokeColor)
@@ -357,10 +415,24 @@
             return draw.setDimensionsOn(shape, dimensions);
         },
 
+        /**
+         * polyStar: Draws a polyStar on a new Shape or the provided onShape.
+         * @param {Number} radius: The radius in pixels.
+         * @param {Number} sides: The number of sides to the polyStar.
+         * @param {Number} pointSize: The size of the ends of the points of the polyStar.
+         * @param {Number} angle: The angle of the points of the polyStar.
+         * @param {String} color: The fill color, hexidecimal.
+         * @param {String} strokeColor: The stroke color, hexidecimal.
+         * @param {Number} strokeStyle: The border thickness in pixels.
+         * @param {Number} xOffset: The x offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Number} yOffset: The y offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Shape} onShape: If provided, will draw the polyStar on this Shape, updating its dimensions.
+         * @return {Shape}: With the polyStar drawn on it, either a new Shape, or the Shape passed as onShape.
+         */
         polyStar: function (radius, sides, pointSize, angle, color, strokeColor, strokeStyle, xOffset, yOffset, onShape) {
-            var dimensions = buildDimensions(TYPE_CIRCULAR, radius * 2, radius * 2, xOffset, yOffset, radius);
-            
-            var shape = (onShape) ? onShape : new createjs.Shape();
+            const
+                dimensions = buildDimensions(TYPE_CIRCULAR, radius * 2, radius * 2, xOffset, yOffset, radius),
+                shape = (onShape) ? onShape : new createjs.Shape();
             shape.graphics
                 .setStrokeStyle(strokeStyle)
                 .beginStroke(strokeColor)
@@ -372,36 +444,61 @@
             return shape;
         },
         
-        
-        randomCircle: function (randomizeAlpha, addCross, borderColor, borderThickness, randomRadialProps) {
-            var props, circle;
+        /**
+         * randomCircle: Draws a randomly sized and colored circle.
+         * @param {Boolean} randomizeAlpha: If true, will randomly select the alpha value between 0 and .999.
+         * @param {Boolean} addCross: If true, will draw a lined cross through the middle of the circle, useful if the circle is intended to rotate.
+         * @param {Number} pointSize: The size of the ends of the points of the polyStar.
+         * @param {Number} angle: The angle of the points of the polyStar.
+         * @param {String} color: The fill color, hexidecimal.
+         * @param {String} strokeColor: The stroke color, hexidecimal.
+         * @param {Number} strokeStyle: The border thickness in pixels.
+         * @param {Number} xOffset: The x offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Number} yOffset: The y offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Shape} onShape: If provided, will draw the polyStar on this Shape, updating its dimensions.
+         * @return {Shape}: With the polyStar drawn on it, either a new Shape, or the Shape passed as onShape.
+         */
+        randomCircle: function (randomizeAlpha, addCross, strokeColor, strokeStyle, randomRadialProps) {
+            let props, circle;
             
             props = (randomRadialProps) ? randomRadialProps : draw.randomRadialProps();
             
             if (addCross) {
                 // always make sure the cross is visible - it won't be if randomizeAlpha is false //
                 randomizeAlpha = true;
-                circle = draw.line(-(props.radius), 0, props.radius, 0, borderColor  || '#000', 2);
-                draw.line(0, -(props.radius), 0, props.radius, borderColor || '#000', 2, circle);
+                circle = draw.line(-(props.radius), 0, props.radius, 0, strokeColor  || '#000', 2);
+                draw.line(0, -(props.radius), 0, props.radius, strokeColor || '#000', 2, circle);
             }
             
-            if (borderColor && !borderThickness) { borderThickness = 1; }
+            if (strokeColor && !strokeStyle) { strokeStyle = 1; }
             
             // first draw the circle's border - don't use stroke //
-            circle = draw.circle(props.radius+borderThickness, borderColor, null, null, null, null, circle);
+            circle = draw.circle(props.radius+strokeStyle, strokeColor, null, null, null, null, circle);
             draw.circle(props.radius, props.color, null, null, null, null, circle);
             circle.x = props.x;
             circle.y = props.y;
-            
-            
             
             if (randomizeAlpha) {circle.alpha = Math.random(); }
             
             return circle;
         },
         
+        /**
+         * randomCircleInArea: Draws a randomly sized and colored circle, and randomly sets its x, y properties within the area.
+         * @param {Boolean} randomizeAlpha: If true, will randomly select the alpha value between 0 and .999.
+         * @param {Boolean} addCross: If true, will draw a lined cross through the middle of the circle, useful if the circle is intended to rotate.
+         * @param {Number} pointSize: The size of the ends of the points of the polyStar.
+         * @param {Number} angle: The angle of the points of the polyStar.
+         * @param {String} color: The fill color, hexidecimal.
+         * @param {String} strokeColor: The stroke color, hexidecimal.
+         * @param {Number} strokeStyle: The border thickness in pixels.
+         * @param {Number} xOffset: The x offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Number} yOffset: The y offset from the shapes registration point. Registration point is its own (x, y) point, where it'll be positioned in its parent.
+         * @param {Shape} onShape: If provided, will draw the polyStar on this Shape, updating its dimensions.
+         * @return {Shape}: With the polyStar drawn on it, either a new Shape, or the Shape passed as onShape.
+         */
         randomCircleInArea: function (area, randomizeAlpha, addCross, borderColor, borderThickness, randomRadialProps) {
-            var props, circle;
+            let props, circle;
             
             props = (randomRadialProps) ? randomRadialProps : draw.randomRadialProps(area);
             
@@ -419,8 +516,6 @@
             draw.circle(props.radius, props.color, null, null, null, null, circle);
             circle.x = props.x;
             circle.y = props.y;
-            
-            
             
             if (randomizeAlpha) {circle.alpha = Math.random(); }
             
@@ -452,7 +547,7 @@
          * @param {Number} y: The y position of the Bitmap.
          */
         bitmap: function(src, x, y) {
-            var bitmap = new createjs.Bitmap(src);
+            const bitmap = new createjs.Bitmap(src);
             bitmap.x = x;
             bitmap.y = y;
             return bitmap;
@@ -470,7 +565,7 @@
          * @return {Text} The Text.
          */
         textfield: function (text, sizeAndFont, color, align, baseline, x, y) {
-            var tf = new createjs.Text(text, sizeAndFont || "15px Arial", color || "#666666");
+            const tf = new createjs.Text(text, sizeAndFont || "15px Arial", color || "#666666");
             tf.textBaseline = baseline || "top";
             tf.textAlign = align || "center";
             tf.x = x;
@@ -493,16 +588,16 @@
          * @param {String} color: A hexidecimal number, the color of the text.
          * @return {TextField} A CreateJS Text.
          */
-        fps: function (color) {
-            color = (color) ? color : '#FFF';
-            var _textfield = new createjs.Text("-- fps", "bold 30px Arial", color);
-            var _fps = new createjs.Container();
-            _fps.textfield = _textfield;
-            _fps.addChild(_textfield);
-            _fps.update = function (parent) {
-                _textfield.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
+        fps: function (color = '#FFF') {
+            const 
+                textfield = new createjs.Text("-- fps", "bold 30px Arial", color),
+                fps = new createjs.Container();
+            fps.textfield = textfield;
+            fps.addChild(textfield);
+            fps.update = function (parent) {
+                textfield.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
             };
-            return _fps;
+            return fps;
         }
     };
     
