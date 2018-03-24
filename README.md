@@ -1,25 +1,34 @@
 Draw
 ===
 
-To assist in learning, a wrapper of the CreateJS Graphic API to reduce boiler-plate and that also supports calculation of width and height properties on shapes and composite grap.
+A wrapper of the CreateJS Graphic API to reduce boiler-plate.
+
+Supports:
+
+    * creating basic shapes
+    * calculation of width and height properties on Shape objects.
+    * creating some shapes with randomized properties, size, alpha, (x, y) within an area, etc.
+    * composite graphics, ie, continue to draw on the smae Graphic object.
 
 ##Installation
 
-You can either install using bower or manually download the file and `draw-x.x.x.js` include it in your index.html.
+You can either install using `bower` or manually download the `draw.js` file and `draw-x.x.x.js` include it in your index.html using a `<script>` tag.
 
 ###Bower
 
 ````
-$ bower install opspark-draw
+$ bower install --save opspark-draw
 ````
 
 ###index.html
 
-Either way, ensure you include both `easeljs-0.7.1.min.js` and `draw-x.x.x.js` file within your index.html file, like so:
+Either way, ensure you first include `EaselJS` and `draw`  within the `<head>` tag of your `index.html` file, like so:
 
 ````html
-<script src="bower_components/easeljs/lib/easeljs-0.7.1.min.js"></script>
-<script src="bower_components/opspark-draw/draw-0.1.2.js"></script>
+<head>
+    <script src="bower_components/EaselJS/lib/easeljs.min.js"></script>
+    <script src="bower_components/opspark-draw/draw.js"></script>
+</head>
 ````
 
 ###Availability
@@ -27,13 +36,13 @@ Either way, ensure you include both `easeljs-0.7.1.min.js` and `draw-x.x.x.js` f
 Once installed, draw is available at:
 
 ````javascript
-var draw = window.opspark.draw;
+const draw = window.opspark.draw;
 ````
 
 ##Usage
 
 ````javascript
-var shape = draw.rect(40, 40, '#CCC', null, null, 0, 0);
+const shape = draw.rect(40, 40, '#CCC', null, null, 0, 0);
 shape.x = 10;
 view.addChild(shape);
 
