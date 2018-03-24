@@ -49,6 +49,7 @@ view.addChild(shape);
 // using should.js //
 (shape.width).should.be.exactly(40);
 
+// continue to draw on the same Shape by passing it as the last arguement //
 draw.rect(10, 40, '#999', null, null, -10, 20, shape);
 (shape.width).should.be.exactly(50);
 (shape.height).should.be.exactly(60);
