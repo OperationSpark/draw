@@ -5,10 +5,10 @@ A wrapper of the CreateJS Graphic API to reduce boiler-plate.
 
 Supports:
 
-    * creating basic shapes
+    * drawing basic shapes.
     * calculation of width and height properties on Shape objects.
     * creating some shapes with randomized properties, size, alpha, (x, y) within an area, etc.
-    * composite graphics, ie, continue to draw on the smae Graphic object.
+    * composite graphics, ie, continue to draw on the same Graphic object.
 
 ##Installation
 
