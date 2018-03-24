@@ -5,7 +5,7 @@
   "authors": [
     "John Fraboni <john@operationspark.org>"
   ],
-  "description": "Not optimally desgiend, but to assist in learning, a wrapper of the CreateJS Graphic API to reduce boiler-plate and that also supports calculation of width and height properties on shapes.",
+  "description": "A wrapper of the CreateJS Graphic API to reduce boiler-plate. Supports calculation of width and height properties on Shapes.",
   "main": "draw.js",
   "dependencies": {
     "EaselJS": "1.0.2"
